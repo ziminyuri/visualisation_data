@@ -62,6 +62,9 @@ class MainWindow(Frame):
         if choice_of_visualisation == "Столбчатая диаграмма":
             visualisation.count_parameters_for_bar()
 
+        if choice_of_visualisation == "Мультипликативная модель":
+            visualisation.count_parameters_multi()
+
         choice_of_place_for_output = int(self.c1.get())
 
         self.draw(visualisation, choice_of_place_for_output)
@@ -120,6 +123,20 @@ class MainWindow(Frame):
 
             fig.autofmt_xdate(rotation=25)
 
+        if visualisation.type_visualisation == 3:
+
+            x_list = visualisation.multi_x
+            y_list = visualisation.multi_y
+
+            y_min = np.amin(visualisation.multi_y)
+            y_max = np.amax(visualisation.multi_y)
+
+            x = len(x_list)
+            ax.set_xlim([0, x])
+            ax.set_ylim([y_min, y_max])
+
+            ax.plot(x_list, y_list, color='red')
+
         canvas = FigureCanvasTkAgg(fig, master=self.root)  # A tk.DrawingArea.
         canvas.draw()
 
@@ -144,7 +161,7 @@ class MainWindow(Frame):
         label2 = Label(a, text="Визаулизация", height=1, width=12, font='Arial 14')
         label2.place(x=10, y=60)
         self.c2 = ttk.Combobox(a,
-                               values=[u"Круговая диаграмма", u"Столбчатая диаграмма", u"y(x) = beta * exp^(alpha * i)",
+                               values=[u"Круговая диаграмма", u"Столбчатая диаграмма", u"Мультипликативная модель",
                                        u"y(x) = beta * exp^(alpha * -i)"], height=15)
         self.c2.place(x=10, y=80)
 

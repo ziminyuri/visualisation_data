@@ -64,4 +64,18 @@ class Model():
                         self.gender_parental_level_of_education[m + j] += 1
 
         self.unique_parental_level_of_education = unique_parental_level_of_education
-        #self.unique_parental_level_of_education = np.append(unique_parental_level_of_education, unique_parental_level_of_education)
+
+    def count_parameters_multi(self):
+        self.type_visualisation = 3
+
+        k = 0.1
+        b = 4
+        n= 1000
+        x = np.arange(0, n)
+        trend_y_1 = k * x + b
+
+        trend_y_2 = np.random.uniform(-100, 100, n)
+
+        self.multi_y = trend_y_1 * trend_y_2
+        self.multi_x = x
+
