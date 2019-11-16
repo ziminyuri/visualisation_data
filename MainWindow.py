@@ -65,6 +65,9 @@ class MainWindow(Frame):
         if choice_of_visualisation == "Мультипликативная модель":
             visualisation.count_parameters_multi()
 
+        if choice_of_visualisation == "Вложенная круговая диаграмма":
+            visualisation.count_parameters_nested_pie()
+
         choice_of_place_for_output = int(self.c1.get())
 
         self.draw(visualisation, choice_of_place_for_output)
@@ -137,6 +140,17 @@ class MainWindow(Frame):
 
             ax.plot(x_list, y_list, color='red')
 
+        if visualisation.type_visualisation == 4:
+            pieces = visualisation.parameters_for_pie[1]
+            data = visualisation.parameters_for_pie_2
+            offset = 0.4
+            custom_colors = ['b', 'r', 'c', 'm', 'y', 'g']
+            ax.pie(data.sum(axis=1), radius=1, colors=custom_colors, wedgeprops=dict(width=offset, edgecolor='w'))
+            custom_colors_2 = ['lightpink' 'gold', 'aquamarine']
+            ax.pie(data.flatten(), radius=1 - offset, colors=custom_colors, wedgeprops=dict(width=offset, edgecolor='w'))
+
+
+
         canvas = FigureCanvasTkAgg(fig, master=self.root)  # A tk.DrawingArea.
         canvas.draw()
 
@@ -162,7 +176,7 @@ class MainWindow(Frame):
         label2.place(x=10, y=60)
         self.c2 = ttk.Combobox(a,
                                values=[u"Круговая диаграмма", u"Столбчатая диаграмма", u"Мультипликативная модель",
-                                       u"y(x) = beta * exp^(alpha * -i)"], height=15)
+                                       u"Вложенная круговая диаграмма"], height=15)
         self.c2.place(x=10, y=80)
 
         b1 = Button(a, text="Добавить", command=lambda: self.click_button_add(), width="13", height="2")

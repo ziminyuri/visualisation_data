@@ -42,8 +42,9 @@ class Model():
         self.type_visualisation = 0
 
     def count_parameters_for_pie(self):
-        self.parameters_for_pie = np.unique(self.parental_level_of_education, return_counts=True)
         self.type_visualisation = 1
+        self.parameters_for_pie = np.unique(self.parental_level_of_education, return_counts=True)
+
 
     def count_parameters_for_bar(self):
         self.type_visualisation = 2
@@ -78,4 +79,27 @@ class Model():
 
         self.multi_y = trend_y_1 * trend_y_2
         self.multi_x = x
+
+    def count_parameters_nested_pie(self):
+        self.type_visualisation = 4
+        self.parameters_for_pie = np.unique(self.parental_level_of_education, return_counts=True)
+
+        parameters_for_pie_2 = [[0] * 3 for i in range(len(self.parameters_for_pie[0]))]
+
+        n = len(self.math_score)
+        m = len(self.parameters_for_pie[0])
+
+        for i in range(n):
+            for j in range(m):
+                if self.parental_level_of_education[i] == self.parameters_for_pie[0][j]:
+                    if self.math_score[i] <50:
+                        parameters_for_pie_2[j][0] += 1
+
+                    if (self.math_score[i] >=50) and (self.math_score[i] <75):
+                        parameters_for_pie_2[j][1] += 1
+
+                    if self.math_score[i] >=75:
+                        parameters_for_pie_2[j][2] += 1
+
+        self.parameters_for_pie_2 = np.array(parameters_for_pie_2)
 
