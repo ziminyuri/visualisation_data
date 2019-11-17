@@ -127,7 +127,6 @@ class MainWindow(Frame):
             fig.autofmt_xdate(rotation=25)
 
         if visualisation.type_visualisation == 3:
-
             x_list = visualisation.multi_x
             y_list = visualisation.multi_y
 
@@ -141,13 +140,39 @@ class MainWindow(Frame):
             ax.plot(x_list, y_list, color='red')
 
         if visualisation.type_visualisation == 4:
-            pieces = visualisation.parameters_for_pie[1]
+            ax = fig.add_subplot()
+            owners = visualisation.parameters_for_pie[0]
             data = visualisation.parameters_for_pie_2
             offset = 0.4
             custom_colors = ['b', 'r', 'c', 'm', 'y', 'g']
             ax.pie(data.sum(axis=1), radius=1, colors=custom_colors, wedgeprops=dict(width=offset, edgecolor='w'))
-            custom_colors_2 = ['lightpink' 'gold', 'aquamarine']
-            ax.pie(data.flatten(), radius=1 - offset, colors=custom_colors, wedgeprops=dict(width=offset, edgecolor='w'))
+
+            first_legend = fig.legend(
+                title="Level of education",
+                bbox_to_anchor=(0.32, 0.87),
+                loc="upper right",
+                prop={'size': 8},
+                labels=owners)
+            ax.add_artist(first_legend)
+
+            custom_colors_2 = ['#DC143C', '#B8860B', '#32CD32']
+            owners_2 = ['Satisfactorily', 'Good', 'Excellent']
+            bx = fig.add_subplot()
+            bx.pie(data.flatten(), radius=1 - offset, colors=custom_colors_2,
+                   wedgeprops=dict(width=offset, edgecolor='w'))
+
+            second_legend = bx.legend(
+                title="Math_score",
+                bbox_to_anchor=(0.1, 0.3),
+                loc="upper right",
+                prop={'size': 8},
+                labels=owners_2)
+
+            LH = second_legend.legendHandles
+            j = 0
+            for i in LH:
+                i.set_color(custom_colors_2[j])
+                j+=1
 
 
 
