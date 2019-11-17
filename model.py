@@ -46,6 +46,7 @@ class Model():
         self.parameters_for_pie = np.unique(self.parental_level_of_education, return_counts=True)
 
 
+
     def count_parameters_for_bar(self):
         self.type_visualisation = 2
         unique_parental_level_of_education = np.unique(self.parental_level_of_education)
@@ -60,7 +61,7 @@ class Model():
             for j in range(m):
                 if self.parental_level_of_education[i] == unique_parental_level_of_education[j]:
                     if self.gender[i] == "male":
-                        self.gender_parental_level_of_education[j] += 1
+                        self.gender_parental_level_of_education[j] +=1
                     else:
                         self.gender_parental_level_of_education[m + j] += 1
 
