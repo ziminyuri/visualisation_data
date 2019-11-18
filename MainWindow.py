@@ -114,80 +114,101 @@ class MainWindow(Frame):
 
         # Столбчатая диаграмма
         if visualisation.type_visualisation == 2:
+            # Вытаскиваем названия образований из объекта класса visualisation
             name_level_of_education = visualisation.unique_parental_level_of_education.tolist()
-            xpos_male = np.arange(len(name_level_of_education)) - 0.2
-            xpos_female = np.arange(len(name_level_of_education)) + 0.2
+            xpos_male = np.arange(len(name_level_of_education)) - 0.2  # Гененерируем массив координат для оси х для графика Male
+            xpos_female = np.arange(len(name_level_of_education)) + 0.2 # Гененерируем массив координат для оси х для графика Female
 
-            count_male = visualisation.gender_parental_level_of_education[:6]
-            count_female = visualisation.gender_parental_level_of_education[6:]
+            # Вытащили значения количества из объекта класса visualisation
+            count_male = visualisation.gender_parental_level_of_education_male
+            count_female = visualisation.gender_parental_level_of_education_female
 
+            # Указали что диаграмма будет столбчатая, так же значения по оси х, у, ширину и наименования для легенжы
             ax.bar(xpos_male, count_male, width=0.4, label='Male')
             ax.bar(xpos_female, count_female, width=0.4, label='Female')
-            ax.set_ylabel('Number')
+            ax.set_ylabel('Number')         # Подписали ось y
 
-            ax.legend(loc='upper right')
+            ax.legend(loc='upper right')    # Указали местоположение легенды
 
-            xs = np.arange(len(name_level_of_education)).tolist()
-            ax.set_xticks(xs)
-            ax.set_xticklabels(name_level_of_education, fontdict={'fontsize': 8}, minor=False)
+            xs = np.arange(len(name_level_of_education)).tolist()    # Создаем массив значений для оси х, чтобы подписать значения
+            ax.set_xticks(xs)                                        # Указали как разметить область для label по оси х
+            ax.set_xticklabels(name_level_of_education, fontdict={'fontsize': 8}, minor=False) # Подписали наименование по оси х
 
-            y_min = 0
-            y_max = np.amax(visualisation.gender_parental_level_of_education) * 1.5
-            ax.set_ylim([y_min, y_max])
+            y_min = 0           # Указали y_min - минимальное значения оси по оси у
 
-            fig.autofmt_xdate(rotation=25)
+            # Получаем макимальное значение из массива значений для Male
+            y_max_male = np.amax(visualisation.gender_parental_level_of_education_male)
+            # Получаем макимальное значение из массива значений для Female
+            y_max_female = np.amax(visualisation.gender_parental_level_of_education_female)
 
+            # Выбираем максимальное значение и умножаем на 1.5 для того чтобы укзаать значение по оси y
+            if y_max_male > y_max_female:
+                y_max = y_max_male * 1.5
+            else:
+                y_max = y_max_female * 1.5
+
+            ax.set_ylim([y_min, y_max])    # Установили макимальное и минимальное значение оси у
+
+            fig.autofmt_xdate(rotation=25)          # Разместили label оси х под углом 25
+
+
+        # Визуализация мультипликативного тренда
         if visualisation.type_visualisation == 3:
-            x_list = visualisation.multi_x
-            y_list = visualisation.multi_y
+            x_list = visualisation.multi_x      # Получили массив значений по х
+            y_list = visualisation.multi_y      # Получили массив значений по y
 
-            y_min = np.amin(visualisation.multi_y)
-            y_max = np.amax(visualisation.multi_y)
+            y_min = np.amin(visualisation.multi_y)      # Вычислили минимальное значение по у
+            y_max = np.amax(visualisation.multi_y)      # Вычислили минимальное значение по у
 
-            x = len(x_list)
-            ax.set_xlim([0, x])
-            ax.set_ylim([y_min, y_max])
+            x = len(x_list)                     # Посчитали количество значений в массиве х
+            ax.set_xlim([0, x])                 # Задали координаты оси х
+            ax.set_ylim([y_min, y_max])         # Задали координаты оси у
 
-            ax.plot(x_list, y_list, color='red')
+            ax.plot(x_list, y_list, color='red')        # Построили график, передали массив значений х, у и цвет
 
+        # Визуализация вложенной круговой диаграммы
         if visualisation.type_visualisation == 4:
-            ax = fig.add_subplot()
-            owners = visualisation.parameters_for_pie[0]
-            data = visualisation.parameters_for_pie_2
-            offset = 0.4
+
+            owners = visualisation.parameters_for_pie[0]    # Получили массив уникальных label образования из объекта класса Model
+            data = visualisation.parameters_for_pie_2       # Получили массив количества каждой оценки по каждому label образованию
+            offset = 0.4                                    # Задали радиус для выреза по центру
             custom_colors = ['b', 'r', 'c', 'm', 'y', 'g']
+            # Рисуем внешнюю круговую диаграмму, с радиусом 1, пользовательскими цветами и вырезом по центру белого цвета
             ax.pie(data.sum(axis=1), radius=1, colors=custom_colors, wedgeprops=dict(width=offset, edgecolor='w'))
 
-            first_legend = fig.legend(
-                title="Level of education",
+
+            # В  матплотлибе нельзя разместить 2 легенды на одном subplot, для этого производим следующую манипуляцию
+            first_legend = fig.legend(          # Объявляем легенду
+                title="Level of education",     # Заголовок
                 bbox_to_anchor=(0.32, 0.87),
                 loc="upper right",
                 prop={'size': 8},
                 labels=owners)
-            ax.add_artist(first_legend)
+            ax.add_artist(first_legend)         # Добавляем легенду на subplot (это действие неообходимо если используется 2 и более легенды_
 
-            custom_colors_2 = ['#DC143C', '#B8860B', '#32CD32']
-            owners_2 = ['Satisfactorily', 'Good', 'Excellent']
-            bx = fig.add_subplot()
-            bx.pie(data.flatten(), radius=1 - offset, colors=custom_colors_2,
-                   wedgeprops=dict(width=offset, edgecolor='w'))
+            custom_colors_2 = ['#DC143C', '#B8860B', '#32CD32']   # ВВодим массив цветов в 16ричном формате
+            owners_2 = ['Satisfactorily', 'Good', 'Excellent']      # Вводим наименование title для оценок
+            bx = fig.add_subplot()                                  # Инициализируем новый sublot
+            bx.pie(data.flatten(), radius=1 - offset, colors=custom_colors_2,   # Инициализируем круговую диагруму вложенную
+                   wedgeprops=dict(width=offset, edgecolor='w'))                # data.flatten() переводит многомерный массив в одномерный
 
-            second_legend = bx.legend(
+            second_legend = bx.legend(                 # Вторая легенда
                 title="Math_score",
                 bbox_to_anchor=(0.1, 0.3),
                 loc="upper right",
                 prop={'size': 8},
                 labels=owners_2)
 
-            LH = second_legend.legendHandles
+            LH = second_legend.legendHandles            # Получаем список объектов title использованных в легенде
             j = 0
             for i in LH:
-                i.set_color(custom_colors_2[j])
+                i.set_color(custom_colors_2[j])         # Изменяем цвета на те которые мы задали
                 j += 1
 
-        canvas = FigureCanvasTkAgg(fig, master=self.root)  # A tk.DrawingArea.
+        canvas = FigureCanvasTkAgg(fig, master=self.root)
         canvas.draw()
 
+        # Указываем позицию где необходимо отобразить диаграмму
         if choice_of_place_for_output == 1:
             canvas.get_tk_widget().place(x=5, y=35)
 
@@ -200,13 +221,14 @@ class MainWindow(Frame):
         if choice_of_place_for_output == 4:
             canvas.get_tk_widget().place(x=550, y=400)
 
+    # Обработка нажатие на кнопку закрыть в окне добавления визуализации
     def click_button_close(self, subWindow):
         subWindow.destroy()
 
     # Окно добавления визуализации
     def click_button_add_model(self):
 
-        a = Toplevel()
+        a = Toplevel()                              # Инициализируем объект нового окна
         a.title('Добавить визуализацию')
         a.geometry('300x200')
 
